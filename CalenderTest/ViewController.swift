@@ -15,19 +15,29 @@ class ViewController: UIViewController,
                       FSCalendarDelegateAppearance {
 
     @IBOutlet weak var calendarView: UIView!
+    @IBOutlet weak var tableView: UITableView!
+
     var calendar = FSCalendar()
+    var isSeupCalenar = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupCalender()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if !isSeupCalenar {
+            setupCalender()
+        }
     }
 
     func setupCalender() {
-        calendar = FSCalendar(frame: CGRect(x: 0, y: 0, width: calendarView.frame.size.width, height: calendarView.frame.size.height))
+        calendar = FSCalendar(frame: CGRect(x: 4, y: 4, width: calendarView.frame.size.width - 8, height: calendarView.frame.size.height - 8))
         calendar.dataSource = self
         calendar.delegate = self
         setDetail()
         calendarView.addSubview(calendar)
+        isSeupCalenar = true
     }
 
     func setDetail() {
@@ -43,7 +53,6 @@ class ViewController: UIViewController,
         calendar.appearance.titleTodayColor = .systemBlue //本日のテキストカラー
         calendar.appearance.selectionColor = .systemBlue //選択した日付のカラー
         calendar.appearance.titleSelectionColor = .white //選択した日付のテキストカラー
-        //        calendar.calendarWeekdayView.weekdayLabels[0].textColor = .systemRed // 日曜日赤
     }
 
     //曜日判定(日曜日:1 〜 土曜日:7)
@@ -70,11 +79,11 @@ class ViewController: UIViewController,
 
     // 土日や祝日の日の文字色を変える
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
+        
         //祝日判定をする（祝日は赤色で表示する）
         if self.judgeHoliday(date){
             return UIColor.red
         }
-
         //土日の判定を行う（土曜日は青色、日曜日は赤色で表示する）
         let weekday = self.getWeekIdx(date)
         if weekday == 1 {   //日曜日
@@ -90,12 +99,17 @@ class ViewController: UIViewController,
     // ラベル追加
     func calendar(_ calendar: FSCalendar, willDisplay cell: FSCalendarCell, for date: Date, at monthPosition: FSCalendarMonthPosition) {
 
-        let taijulabel = UILabel(frame: CGRect(x: 12, y: 30, width: 40, height: 20))
-        taijulabel.font = UIFont.systemFont(ofSize: 8, weight: .bold)
-        taijulabel.text = "30000円"
-        taijulabel.textColor = UIColor.gray
-        taijulabel.layer.cornerRadius = cell.bounds.width/2
-        cell.addSubview(taijulabel)
+        let subtitleLabel = UILabel()
+        subtitleLabel.text = "100000円"
+        subtitleLabel.font = UIFont.systemFont(ofSize: 9, weight: .bold)
+        subtitleLabel.textColor = .darkGray
+        subtitleLabel.textAlignment = .center
+        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        cell.contentView.addSubview(subtitleLabel)
+        subtitleLabel.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor).isActive = true
+        subtitleLabel.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor).isActive = true
+        subtitleLabel.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor).isActive = true
+        subtitleLabel.heightAnchor.constraint(equalTo: cell.contentView.heightAnchor, multiplier: 0.25).isActive = true
     }
 
     // カレンダーのセルタップ時
@@ -110,6 +124,18 @@ class ViewController: UIViewController,
         dateFormatter.dateFormat = "yyyy年M月"
         let currentPageDate = calendar.currentPage
         print(currentPageDate)
+    }
+
+    func add9Hours(date: Date) -> Date {
+        let nineHoursLater = date.addingTimeInterval(9 * 60 * 60)
+        return nineHoursLater
+    }
+
+    func getMonthFromDate(date: Date) -> Int {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM"
+        let monthInt = Int(dateFormatter.string(from: date)) ?? 0
+        return monthInt
     }
 
 }
