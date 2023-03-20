@@ -122,6 +122,10 @@ class ViewController: UIViewController,
         return nil
     }
 
+    func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
+
+    }
+
     //　カレンダーがスクロールされたら
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         let dateFormatter = DateFormatter()
