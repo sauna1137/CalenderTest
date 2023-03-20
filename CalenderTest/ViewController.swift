@@ -118,6 +118,10 @@ class ViewController: UIViewController,
         print("Selected date: \(date)")
     }
 
+    func calendar(_ calendar: FSCalendar, subtitleFor date: Date) -> String? {
+        return nil
+    }
+
     //　カレンダーがスクロールされたら
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         let dateFormatter = DateFormatter()
